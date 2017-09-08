@@ -12,4 +12,4 @@ def show_wins(stones, M):
         print("+" if wins[i] else "_", end="")
     print()
 
-show_wins(24, [8, 3, 1])
+show_wins(124, [1, 8])
