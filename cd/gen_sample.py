@@ -1,6 +1,6 @@
 from random import randint
 
-MAX_CAT = 2*10**6
+MAX_CAT = 10**9
 
 jack = 10**6
 jill = 10**6
