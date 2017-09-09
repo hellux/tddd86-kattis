@@ -6,10 +6,13 @@
 /*
  * Return pos of value in sorted array (if in array, otherwise where it would be)
  */
-unsigned pos(unsigned array[], unsigned start, unsigned end, unsigned value) {
+unsigned long pos(unsigned long array[],
+                  unsigned long start,
+                  unsigned long end,
+                  unsigned long value) {
     while (start < end) {
-        unsigned middle = (start + end) / 2;
-        unsigned current = array[middle];
+        unsigned long middle = (start + end) / 2;
+        unsigned long current = array[middle];
 
         if (current < value) {
             start = middle + 1;
@@ -23,27 +26,27 @@ unsigned pos(unsigned array[], unsigned start, unsigned end, unsigned value) {
 }
 
 int main(int argc, char* args[]) {
-    unsigned jack_catalog[MAX_CDS];
-    unsigned jack, jill;
-    scanf("%u%u", &jack, &jill);
+    unsigned long jack_catalog[MAX_CDS];
+    unsigned long jack, jill;
+    scanf("%lu%lu", &jack, &jill);
     
-    unsigned start = 0;
-    unsigned size;
+    unsigned long start = 0;
+    unsigned long size;
     for (size = 0; size < jack; size++) {
-        scanf("%u", jack_catalog+size);
+        scanf("%lu", jack_catalog+size);
     }
 
-    unsigned sell = 0;
-    for (int i = 0; i < jill; i++) {
-        unsigned cat_num;
-        scanf("%u", &cat_num);
+    unsigned long sell = 0;
+    for (unsigned long i = 0; i < jill; i++) {
+        unsigned long cat_num;
+        scanf("%lu", &cat_num);
         start = pos(jack_catalog, start, size, cat_num);
         if (jack_catalog[start] == cat_num) {
             sell++;
         }
     }
 
-    printf("%u\n", sell);
+    printf("%lu\n", sell);
 
     return EXIT_SUCCESS;
 }
