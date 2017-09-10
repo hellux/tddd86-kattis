@@ -1,3 +1,11 @@
+/*
+ * Algorithm:
+ *  -push cars onto two queues, one for each side
+ *  -load from queue as much as possible then switch side and repeat
+ *
+ *  note:
+ *      queues are global and retrieved by calling queues() with 'l' or 'r'
+ */
 #include <stdio.h>
 #include <stdbool.h>
 
