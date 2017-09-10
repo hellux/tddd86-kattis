@@ -14,13 +14,17 @@ struct node {
     struct node* parent;
     struct node* low;
     struct node* high;
-    int prio;
+    long unsigned prio;
 };
 
 struct node* create(struct node* parent, char* key, char* value) {
     struct node* n = malloc(sizeof(struct node));
-    n->key = key;
-    n->value = value;
+
+    n->key = malloc(sizeof(char)*(strlen(key)+1));
+    n->value = malloc(sizeof(char)*(strlen(value)+1));
+    strcpy(n->key, key);
+    strcpy(n->value, value);
+
     n->parent = parent;
     n->low = NULL;
     n->high = NULL;
@@ -28,18 +32,41 @@ struct node* create(struct node* parent, char* key, char* value) {
 
     return n;
 }
+void destroy(struct node* n) {
+    if (n != NULL) {
+        destroy(n->low);
+        destroy(n->high);
+
+        printf("key: %s, value: %s\n", n->key, n->value);
+        fflush(stdout);
+
+        free(n->key);
+        free(n->value);
+        free(n);
+    }
+}
 /*
  * Rotate n and return if it became root
  */
 bool rotate(struct node* n) {
     struct node* parent = n->parent;
 
+    if (parent->parent) {
+        if (parent == parent->parent->low) {
+            parent->parent->low = n;
+        } else {
+            parent->parent->high = n;
+        }
+    }
+
     if (n == parent->low) {
         /* rotate right */
+        if (n->high) n->high->parent = parent;
         parent->low = n->high;
         n->high = parent;
     } else {
         /* rotate left */
+        if (n->low) n->low->parent = parent;
         parent->high = n->low;
         n->low = parent;
     }
@@ -51,7 +78,7 @@ bool rotate(struct node* n) {
 }
 /*
  * rotates n until it is root or has higher priority than
- * its parent.
+ * its parent. returns root
  * n may not be root at start
  */
 struct node* order(struct node* n, struct node* root) {
@@ -75,7 +102,8 @@ struct node* insert(struct node* root, char* key, char* value) {
 
     struct node* n = root;
     while (1) {
-        if (strcmp(key, n->key) < 0) {
+        int comp = strcmp(key, n->key);
+        if (comp < 0) {
             if (n->low) {
                 n = n->low;
             } else {
@@ -83,7 +111,7 @@ struct node* insert(struct node* root, char* key, char* value) {
                 n->low = next;
                 return order(next, root);
             }
-        } else {
+        } else if (comp > 0 ) {
             if (n->high) {
                 n = n->high;
             } else {
@@ -91,7 +119,9 @@ struct node* insert(struct node* root, char* key, char* value) {
                 n->high = next;
                 return order(next, root);
             }
-        } /* do not handle equal keys */
+        } else {
+            return root;
+        }
     }
 }
 
@@ -122,14 +152,6 @@ char* search(struct node* n, char* key) {
     return NULL;
 }
 
-void free_tree(struct node* n) {
-    if (n != NULL) {
-        free_tree(n->low);
-        free_tree(n->high);
-        free(n);
-    }
-}
-
 /*
  * Algorithm:
  *  -insert entries into sorted binary tree (foreign as key, eng as value)
@@ -138,21 +160,25 @@ void free_tree(struct node* n) {
  *  -profit
  */
 int main() {
-    char english[WORDS][WORD_LENGTH+1];
-    char foreign[WORDS][WORD_LENGTH+1];
+    struct node* tree = NULL;
+    tree = insert(tree, "b", "b");
+    tree = insert(tree, "a", "a");
+    tree = insert(tree, "c", "c");
+    destroy(tree);
+
     struct node* dictionary = NULL;
 
-    int index = 0;
     char buffer[LINE_LENGTH];
     while (fgets(buffer, LINE_LENGTH, stdin)[0] != '\n') {
-        strcpy(english[index], strtok(buffer, " "));
-        strcpy(foreign[index], strtok(NULL, "\n"));
-        dictionary = insert(dictionary, foreign[index], english[index]);
-        index++;
+        char* english = strtok(buffer, " ");
+        char* foreign = strtok(NULL, "\n");
+        printf("eng: %s, for: %s\n", english, foreign);
+        dictionary = insert(dictionary, foreign, english);
     }
 
     char foreign_buffer[WORD_LENGTH+1];
     while (scanf("%s\n", foreign_buffer) == 1) {
+        printf("for: %s\n", foreign_buffer);
         char* word_eng = search(dictionary, foreign_buffer);
         if (word_eng != NULL) {
             printf("%s\n", word_eng);
@@ -161,7 +187,7 @@ int main() {
         }
     }
 
-    free_tree(dictionary);
+    destroy(dictionary);
     
     return 0;
 }
