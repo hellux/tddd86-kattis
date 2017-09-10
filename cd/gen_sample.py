@@ -1,9 +1,9 @@
 from random import randint
 
-MAX_CAT = 10**9
+MAX_CAT = 10**5
 
-jack = 10**6
-jill = 10**6
+jack = 10**5
+jill = 10**4
 
 with open("cd/cds.txt", "w") as f:
     previous = 0
