@@ -1,3 +1,15 @@
+/*
+ * Algorithm:
+ * Calculates winner by going backwards from the end of the game,
+ * where winner is certain.
+ * 
+ * -iterate through every game state (stones left) from 0 stones up to given
+ *  -check if you can jump to a certain loss state (for opponent)
+ *   (0 is loss at start). if yes then flag state as win, otherwise loss
+ *
+ *
+ * TODO: the pattern usually repeats, find general rule for all sets
+ */
 #include <stdio.h>
 #include <stdbool.h>
 
