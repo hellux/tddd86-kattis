@@ -1,7 +1,8 @@
 /*
  * Algorithm:
- *  -insert entries into sorted binary tree (foreign as key, eng as value)
- *  -search tree for english with foreign key
+ *  -insert entries into treap (balanced sorted binary tree) 
+ *   -foreign as key, eng as value
+ *  -search tree for english word with foreign word as key
  *  -??
  *  -profit
  */
