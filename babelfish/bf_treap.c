@@ -3,8 +3,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-/* max values for lazy memory allocation */
-#define WORDS 100000
 #define WORD_LENGTH 10
 #define LINE_LENGTH 23 /* word + space + word + newline + null */
 
@@ -36,9 +34,6 @@ void destroy(struct node* n) {
     if (n != NULL) {
         destroy(n->low);
         destroy(n->high);
-
-        printf("key: %s, value: %s\n", n->key, n->value);
-        fflush(stdout);
 
         free(n->key);
         free(n->value);
@@ -160,25 +155,17 @@ char* search(struct node* n, char* key) {
  *  -profit
  */
 int main() {
-    struct node* tree = NULL;
-    tree = insert(tree, "b", "b");
-    tree = insert(tree, "a", "a");
-    tree = insert(tree, "c", "c");
-    destroy(tree);
-
     struct node* dictionary = NULL;
 
     char buffer[LINE_LENGTH];
     while (fgets(buffer, LINE_LENGTH, stdin)[0] != '\n') {
         char* english = strtok(buffer, " ");
         char* foreign = strtok(NULL, "\n");
-        printf("eng: %s, for: %s\n", english, foreign);
         dictionary = insert(dictionary, foreign, english);
     }
 
     char foreign_buffer[WORD_LENGTH+1];
     while (scanf("%s\n", foreign_buffer) == 1) {
-        printf("for: %s\n", foreign_buffer);
         char* word_eng = search(dictionary, foreign_buffer);
         if (word_eng != NULL) {
             printf("%s\n", word_eng);
