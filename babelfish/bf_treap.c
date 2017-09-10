@@ -1,3 +1,10 @@
+/*
+ * Algorithm:
+ *  -insert entries into sorted binary tree (foreign as key, eng as value)
+ *  -search tree for english with foreign key
+ *  -??
+ *  -profit
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -147,13 +154,6 @@ char* search(struct node* n, char* key) {
     return NULL;
 }
 
-/*
- * Algorithm:
- *  -insert entries into sorted binary tree (foreign as key, eng as value)
- *  -search tree for english with foreign key
- *  -??
- *  -profit
- */
 int main() {
     struct node* dictionary = NULL;
 
