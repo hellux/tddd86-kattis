@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define MAX_INSTR 2000
+#define MAX_INSTR 1001
 
 int insert_pos(int array[], int start, int end, int value) {
     while (start < end) {
@@ -24,7 +24,7 @@ struct stack {
     int top;
 };
 void s_reset(struct stack* s) {
-    s->top = MAX_INSTR / 2;
+    s->top = 1;
     s->block[s->top-1] = -1;
 }
 void s_push(struct stack* s, int value) { s->block[s->top++] = value; }
@@ -36,8 +36,7 @@ struct queue {
     int end;
 };
 void q_reset(struct queue* q) {
-    q->start = q->end = MAX_INSTR / 2;
-    q->block[q->start] = -1; 
+    q->start = q->end = 0;
 }
 void q_push(struct queue* q, int value) { q->block[q->end++] = value; }
 int q_pop(struct queue* q) { return q->block[q->start++]; }
@@ -48,7 +47,7 @@ struct pueue {
     int end;
 };
 void p_reset(struct pueue* p) {
-    p->start = p->end = MAX_INSTR / 2;
+    p->start = p->end = 0;
     p->block[p->start] = -1; 
 }
 void p_push(struct pueue* p, int value) {
@@ -76,9 +75,9 @@ int main() {
             int command, value;
             scanf("%d%d", &command, &value);
             if (command == 1) {
-                s_push(&s, value);
-                q_push(&q, value);
-                p_push(&p, value);
+                if (type[0]) s_push(&s, value);
+                if (type[1]) q_push(&q, value);
+                if (type[2]) p_push(&p, value);
             } else {
                 if (type[0]) if (value != s_pop(&s)) type[0] = false;
                 if (type[1]) if (value != q_pop(&q)) type[1] = false;
