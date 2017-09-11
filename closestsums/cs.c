@@ -1,3 +1,14 @@
+/*
+ * Algorithm
+ * -insert terms with binary search (keep sorted)
+ * -iterate through sums starting with edges
+ *  -if value is lower than sum -> replace the rigthmost
+ *   term with term right to its left. (sum thus decreases)
+ *  -else -> replace leftmost with term to its right (sum thus increases)
+ *  -keep going until sums meet somewhere
+ *  -return sum with smallest diff to value
+ *
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
