@@ -1,3 +1,8 @@
+/*
+ * Algorithm
+ * -load values into data structures
+ * -compare output with given values
+ */
 #include <stdio.h>
 #include <stdbool.h>
 
