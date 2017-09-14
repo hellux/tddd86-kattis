@@ -32,7 +32,7 @@ int main(int argc, char* args[]) {
     char buffer[10000];
     unsigned buffer_size = 0;
 
-    while(scanf("%u%u", &jack, &jill) == 2) {
+    while (scanf("%u%u", &jack, &jill) == 2) {
         if (jack == 0 && jill == 0) break;
 
         unsigned size;
