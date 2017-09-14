@@ -28,25 +28,26 @@ unsigned long pos(unsigned long array[],
 int main(int argc, char* args[]) {
     unsigned long jack_catalog[MAX_CDS];
     unsigned long jack, jill;
-    scanf("%lu%lu", &jack, &jill);
-    
-    unsigned long start = 0;
-    unsigned long size;
-    for (size = 0; size < jack; size++) {
-        scanf("%lu", jack_catalog+size);
-    }
-
-    unsigned long sell = 0;
-    for (unsigned long i = 0; i < jill; i++) {
-        unsigned long cat_num;
-        scanf("%lu", &cat_num);
-        start = pos(jack_catalog, start, size, cat_num);
-        if (jack_catalog[start] == cat_num) {
-            sell++;
+    while(scanf("%lu%lu", &jack, &jill) == 2) {
+        if (jack == 0 && jill == 0) break;
+        unsigned long start = 0;
+        unsigned long size;
+        for (size = 0; size < jack; size++) {
+            scanf("%lu", jack_catalog+size);
         }
-    }
 
-    printf("%lu\n", sell);
+        unsigned long sell = 0;
+        for (unsigned long i = 0; i < jill; i++) {
+            unsigned long cat_num;
+            scanf("%lu", &cat_num);
+            start = pos(jack_catalog, start, size, cat_num);
+            if (jack_catalog[start] == cat_num) {
+                sell++;
+            }
+        }
+
+        printf("%lu\n", sell);
+    }
 
     return EXIT_SUCCESS;
 }
