@@ -1,13 +1,18 @@
 #include <iostream>
+#include <iterator>
+#include <vector>
+#include <set>
+
+using namespace std;
 
 int main() {
     int frontc, rearc;
-    vector<int> front, rear;
 
     while (cin >> frontc >> rearc) {
+        vector<int> front, rear;
         set<double> ratios;
 
-        for (int f = 0; f < frontc, f++) {
+        for (int f = 0; f < frontc; f++) {
             int fr;
             cin >> fr;
             front.push_back(fr);
@@ -24,11 +29,19 @@ int main() {
                 ratios.insert(ratio);
             }
         }
-
-        for(auto it = ratios.begin(); it < ratios.end()-1; it++) {
-            
+        
+        double max_spread = 0;
+        auto it = ratios.begin();
+        while (next(it) != ratios.end()) {
+            if (next(it) == ratios.end()) break;
+            double spread = *next(it) / *it;
+            if (spread > max_spread) {
+                max_spread = spread;
+            }
+            it++;
         }
 
+        printf("%.2f\n", max_spread);
     }
         
     return 0;
