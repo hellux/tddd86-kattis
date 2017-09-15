@@ -9,45 +9,36 @@
  *  -Calculate max of all spreads with sorted list
  */
 
-struct node {
-    double value;
-    struct node* next;
-};
+void insert(double array[], int length, double value) {
+    int start = 0;
+    int end = length;
 
-void insert(struct node* n, double value) {
-    if (n->value == 0) {
-        n->value = value;
-        return;
+    while (start < end) {
+        int middle = (start + end) >> 1;
+        double current = array[middle];
+
+        if (current < value) {
+            start = middle + 1;
+        } else if (value < current) {
+            end = middle;
+        }
     }
 
-    if (value < n->value) {
-        struct node* next = malloc(sizeof(struct node));
-        next->next = NULL;
-        next->value = n->value;
-        n->next = next;
-        n->value = value;
-        return;
+    for (int i = length; i > start; i--) {
+        array[i] = array[i-1];
     }
-
-    while (n->next != NULL && n->next->value < value) {
-        n = n->next;
-    }
-
-    struct node* next = malloc(sizeof(struct node));
-    next->next = n->next;
-    next->value = value;
-    n->next = next;
+    array[start] = value;
 }
 
 int main(int argc, char* args[]) {
-    struct node* ratios = malloc(sizeof(struct node));
-    ratios->value = 0;
-
     int front[MAX_SPROCKETS];
     int rear[MAX_SPROCKETS];
-    int frontc, rearc;
+    double ratios[MAX_SPROCKETS*MAX_SPROCKETS];
+    int frontc, rearc, ratioc;
 
     while (scanf("%d%d", &frontc, &rearc) == 2) {
+        ratioc = 0;
+
         for (int f = 0; f < frontc; f++) {
             scanf("%d", front+f);
         }
@@ -58,20 +49,16 @@ int main(int argc, char* args[]) {
         for (int r = 0; r < rearc; r++) {
             for (int f = 0; f < frontc; f++) {
                 double ratio = (double) rear[r] / front[f];
-                insert(ratios, ratio);
+                insert(ratios, ratioc++, ratio);
             }
         }
 
-        struct node* n = ratios;
-        double max_spread = n->value;
-        while (n->next != NULL) {
-            double spread = n->next->value / n->value;
+        double max_spread = 0;
+        for (int i = 0; i < ratioc-1; i++) {
+            double spread = ratios[i+1] / ratios[i];
             if (spread > max_spread) {
                 max_spread = spread;
             }
-            struct node* next = n->next;
-            free(n);
-            n = next;
         }
 
         printf("%.2f\n", max_spread);
