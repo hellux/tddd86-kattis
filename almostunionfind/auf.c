@@ -1,3 +1,8 @@
+/*
+ * Algorithm:
+ * -array of pointers to set. index[i] points to set with i
+ * -array of sets with list of numbers
+ */
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -15,6 +20,7 @@ struct set* set_ptrs[MAX_NUMS]; /* index = num-1 pointing to its set */
 int numc;
 
 void set_debug() {
+    printf("Sets:\n");
     for (int i = 0; i < numc; i++) {
         struct set* s = set_ptrs[i];
         printf("%d: ( ", i+1);
@@ -53,8 +59,9 @@ void clear_sets() {
 void remove_number(struct set* s, int num) {
     int index = 0;
     while (index < s->size) {
-        if (s->numbers[index] == num) break;
+        if (s->numbers[index++] == num) break;
     }
+    index--;
 
     s->size--;
     for (int i = index; i < s->size; i++) {
@@ -81,7 +88,7 @@ void set_union(int p, int q) {
     struct set* src = set_ptrs[p-1];
     struct set* dest = set_ptrs[q-1];
 
-    if (dest->size <= src->size) {
+    if (dest->size < src->size) {
         src = set_ptrs[q-1];
         dest = set_ptrs[p-1];
     } 
