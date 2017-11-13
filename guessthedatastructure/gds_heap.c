@@ -71,11 +71,7 @@ int p_pop(struct pueue* p) {
     p->block[0] = p->block[--p->size];
     int current = 0;
     int max = current << 1;
-    if (max+2 >= p->size) {
-        max += 1;
-    } else {
-        max += (p->block[max+1] > p->block[max+2]) ? 1 : 2;
-    }
+    max += (p->block[max+1] > p->block[max+2]) ? 1 : 2;
 
     while (p->block[max] > p->block[current] && max < p->size) {
         int tmp = p->block[max];
@@ -83,12 +79,8 @@ int p_pop(struct pueue* p) {
         p->block[current] = tmp;
 
         current = max;
-        max = 2*current;
-        if (max+2 >= p->size) {
-            max += 1;
-        } else {
-            max += (p->block[max+1] > p->block[max+2]) ? 1 : 2;
-        }
+        max = current << 1;
+        max += (p->block[max+1] > p->block[max+2]) ? 1 : 2;
     }
     return value;
 }
