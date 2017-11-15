@@ -11,22 +11,6 @@
 
 #define MAX_INSTR 1001
 
-int insert_pos(int array[], int start, int end, int value) {
-    while (start < end) {
-        int middle = (start + end) / 2;
-        int current = array[middle];
-
-        if (current > value) {
-            start = middle + 1;
-        } else if (value > current) {
-            end = middle;
-        } else {
-            return middle;
-        }
-    }
-    return start;
-}
-
 struct stack {
     int block[MAX_INSTR];
     int top;
