@@ -7,7 +7,7 @@ test_count=$1
 for i in $(seq "$test_count"); do
     int_start=$((RANDOM-16384))
     int_end=$((RANDOM-16384))
-    interval_count=$((RANDOM % 1000));
+    interval_count=$((RANDOM % ($2+1)));
 
     if [ "$int_end" -lt "$int_start" ]; then
         tmp=$int_start;
