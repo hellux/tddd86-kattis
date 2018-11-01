@@ -9,8 +9,8 @@ struct interval {
     float common;
 };
 
-inline float min(float a, float b) { return a < b ? a : b; }
-inline float max(float a, float b) { return a > b ? a : b; }
+float min(float a, float b) { return a < b ? a : b; }
+float max(float a, float b) { return a > b ? a : b; }
 
 float common(float start1, float end1, float start2, float end2) {
     return min(end1, end2) - max(start1, start2);
@@ -41,10 +41,17 @@ void print_intervals(struct interval *ints, int size) {
 
 int main() {
     float start, end;
+    int intc_max = 1000;
+    struct interval *ints = malloc(intc_max*sizeof(struct interval));;
+
     while (scanf("%f %f", &start, &end) == 2) {
         int intc;
         scanf("%d", &intc);
-        struct interval *ints = malloc(intc*sizeof(struct interval));
+        if (intc > intc_max) {
+            intc_max = intc;
+            free(ints);
+            ints = malloc(intc_max*sizeof(struct interval));
+        }
 
         for (int i = 0; i < intc; i++) {
             ints[i].index = i;
@@ -118,8 +125,6 @@ int main() {
         } else {
             printf("impossible\n");
         }
-
-        free(ints);
     }
 
     return EXIT_SUCCESS;
