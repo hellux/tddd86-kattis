@@ -83,6 +83,7 @@ int main() {
             float new_size = end-start;
             if (new_size < size) {
                 size = new_size;
+                /* TODO create list of used intervals, currently incorrect */
                 needed++;
                 /* exit if complete */
                 if (new_size <= 0) {
