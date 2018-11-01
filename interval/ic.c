@@ -16,11 +16,6 @@ float common(float start1, float end1, float start2, float end2) {
     return min(end1, end2) - max(start1, start2);
 }
 
-float uncommon(float start1, float end1, float start2, float end2) {
-    return max(end1, end2) - min(start1, start2) -
-           min(end1, end2) + max(start1, start2);
-}
-
 void swap(struct interval *a, struct interval *b) {
     struct interval tmp = *a;
     *a = *b;
@@ -57,12 +52,12 @@ int main() {
         qsort(ints, intc, sizeof(struct interval), compare);
 
         //print_intervals(ints, intc);
-
+        
         float size = end-start;
         int needed = 0;
 
         /* go through intervals, starting with largest */
-        for (int i = 0; i < intc; i++) {
+        for (int i = 0; i < intc && size > 0; i++) {
             struct interval *valid = NULL;
 
             /* swap until interval overlaps edge */
@@ -78,10 +73,7 @@ int main() {
                 }
             }
 
-            if (!valid) {
-                needed = 0;
-                break;
-            }
+            if (!valid) break;
 
             /* merge interval */
             if (valid->start <= start) start = valid->end;
@@ -90,14 +82,13 @@ int main() {
             /* check if interval changed */
             float new_size = end-start;
             if (new_size < size) {
+                size = new_size;
                 needed++;
-                /* done if complete */
+                /* exit if complete */
                 if (new_size <= 0) {
-                    size = new_size;
                     break;
                 }
             }
-            size = new_size;
 
             /* recalculate intersection sizes */
             for (int j = i+1; j < intc; j++) {
@@ -115,12 +106,14 @@ int main() {
             }
         }
 
-        if (needed > 0 && size <= 0) {
+        if (size <= 0) {
             printf("%d\n", needed);
-            for (int i = 0; i < needed; i++) {
-                printf("%d ", ints[i].index);
+            if (needed > 0) {
+                for (int i = 0; i < needed; i++) {
+                    printf("%d ", ints[i].index);
+                }
+                printf("\n");
             }
-            printf("\n");
         } else {
             printf("impossible\n");
         }
