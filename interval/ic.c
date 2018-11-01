@@ -41,17 +41,11 @@ void print_intervals(struct interval *ints, int size) {
 
 int main() {
     float start, end;
-    int intc_max = 1000;
-    struct interval *ints = malloc(intc_max*sizeof(struct interval));;
+    struct interval ints[20000];
 
     while (scanf("%f %f", &start, &end) == 2) {
         int intc;
         scanf("%d", &intc);
-        if (intc > intc_max) {
-            intc_max = intc;
-            free(ints);
-            ints = malloc(intc_max*sizeof(struct interval));
-        }
 
         for (int i = 0; i < intc; i++) {
             ints[i].index = i;
@@ -98,8 +92,12 @@ int main() {
             if (new_size < size) {
                 needed++;
                 /* done if complete */
-                if (new_size <= 0) break;
+                if (new_size <= 0) {
+                    size = new_size;
+                    break;
+                }
             }
+            size = new_size;
 
             /* recalculate intersection sizes */
             for (int j = i+1; j < intc; j++) {
@@ -116,7 +114,8 @@ int main() {
                 }
             }
         }
-        if (needed > 0) {
+
+        if (needed > 0 && size <= 0) {
             printf("%d\n", needed);
             for (int i = 0; i < needed; i++) {
                 printf("%d ", ints[i].index);
