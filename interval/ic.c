@@ -79,7 +79,7 @@ int main() {
 
             if (!valid) {
                 needed = 0;
-                break;   
+                break;
             }
 
             /* merge interval */
@@ -99,7 +99,7 @@ int main() {
                 ints[j].common = common(ints[j].start, ints[j].end,
                                         start, end);
             }
-    
+
             /* insertion sort intervals */
             for (int j = i+1; j < intc; j++) {
                 k = j;
