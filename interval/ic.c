@@ -40,6 +40,7 @@ int main() {
     int used[20000];
 
     while (scanf("%lf %lf", &start, &end) == 2) {
+        //printf("[%.2f, %.2f]\n", start, end);
         int intc;
         scanf("%d", &intc);
 
@@ -49,7 +50,7 @@ int main() {
             ints[i].common = common(ints[i].start, ints[i].end, start, end);
         }
 
-        print_intervals(ints, intc);
+        //print_intervals(ints, intc);
 
         /* sort intervals by size of intersection with main interval */
         qsort(ints, intc, sizeof(struct interval), compare);
@@ -97,26 +98,18 @@ int main() {
                                         start, end);
             }
 
-            /* insertion sort intervals */
-            for (int j = i+1; j < intc; j++) {
-                k = j;
-                while (k > i+1 && ints[k-1].common > ints[k].common) {
-                    swap(ints+k-1, ints+k);
-                    k--;
-                }
-            }
+            /* resort intervals */
+            qsort(ints+i, intc-i, sizeof(struct interval), compare);
         }
 
         if (size <= 0) {
             printf("%d\n", usedn);
-            /*
             if (usedn > 0) {
                 for (int i = 0; i < usedn; i++) {
                     printf("%d ", used[i]);
                 }
                 printf("\n");
             }
-            */
         } else {
             printf("impossible\n");
         }
