@@ -1,13 +1,12 @@
-src="$1"
 input="/tmp/input"
 ans="/tmp/answers"
 
-test_count=$2
+test_count=$1
 
 for i in $(seq "$test_count"); do
     int_start=$((RANDOM-16384))
     int_end=$((RANDOM-16384))
-    interval_count=$((RANDOM % ($3+1)));
+    interval_count=$((RANDOM % ($2+1)));
 
     if [ "$int_end" -lt "$int_start" ]; then
         tmp=$int_start;
@@ -26,7 +25,3 @@ for i in $(seq "$test_count"); do
         fi
     done
 done > "$input"
-
-echo Generated, running...
-
-tcc -run "$src" < "$input" > "$ans"
