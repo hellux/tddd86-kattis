@@ -49,10 +49,7 @@ int main() {
 
         for (int i = 0; i < intc; i++) {
             ints[i].index = i;
-            float istart, iend;
-            scanf("%f %f", &istart, &iend);
-            ints[i].start = max(start, istart);
-            ints[i].end = max(min(end, iend), start);
+            scanf("%f %f", &ints[i].start, &ints[i].end);
         }
 
         /* sort intervals by size of intersection with main interval */
@@ -62,23 +59,23 @@ int main() {
         
         int usedn = 0;
 
-        float now = start;
         int pindex = -1;
         float pend = start;
-        for (int i = 0; now < end && i < intc; i++) {
-            if (ints[i].start > now) {
+        for (int i = 0; start < end && i < intc; i++) {
+            if (ints[i].start > start) {
                 if (pindex == -1) {
                     break;
                 } else {
                     /* use interval */
                     used[usedn++] = pindex;
                     /* move forward */
-                    now = pend;
+                    start = pend;
                     pindex = -1;
                     /* reevaluate current interval with moved now */
                     i--;
                 }
             } else {
+                /* set to potential if contributing more */
                 if (ints[i].end >= pend) {
                     pindex = ints[i].index;
                     pend = ints[i].end;
@@ -87,10 +84,10 @@ int main() {
         }
         if (pindex != -1) {
             used[usedn++] = pindex;
-            now = pend;
+            start = pend;
         }
 
-        if (now >= end) {
+        if (start >= end) {
             printf("%d\n", usedn);
             if (usedn > 0) {
                 for (int i = 0; i < usedn; i++) {
