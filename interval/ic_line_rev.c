@@ -12,8 +12,8 @@ double min(double a, double b) { return a < b ? a : b; }
 double max(double a, double b) { return a > b ? a : b; }
 
 int compare(const void* v1, const void* v2) {
-    return ((struct interval*)v1)->start <
-           ((struct interval*)v2)->start ? -1 : 1;
+    return ((struct interval*)v1)->end >
+           ((struct interval*)v2)->end ? -1 : 1;
 }
 
 void print_intervals(struct interval *ints, int size) {
@@ -39,7 +39,7 @@ int main() {
         }
 
         //print_intervals(ints, intc);
-
+        
         int usedn = 0;
 
         if (start == end) {
@@ -60,31 +60,31 @@ int main() {
         }
 
         int pindex = -1;
-        double pend = start;
+        double pstart = end;
         for (int i = 0; start < end && i < intc; i++) {
-            if (ints[i].start > start) {
+            if (ints[i].end < end) {
                 if (pindex == -1) {
                     break;
                 } else {
                     /* use interval */
                     used[usedn++] = pindex;
                     /* move forward */
-                    start = pend;
+                    end = pstart;
                     pindex = -1;
                     /* reevaluate current interval with moved now */
                     i--;
                 }
             } else {
                 /* set to potential if contributing more */
-                if (ints[i].end >= pend) {
+                if (ints[i].start <= pstart) {
                     pindex = ints[i].index;
-                    pend = ints[i].end;
+                    pstart = ints[i].start;
                 }
             }
         }
         if (pindex != -1) {
             used[usedn++] = pindex;
-            start = pend;
+            end = pstart;
         }
 
         if (start >= end && usedn > 0) {

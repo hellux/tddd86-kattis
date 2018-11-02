@@ -28,6 +28,14 @@ int compare(const void* v1, const void* v2) {
 }
 
 void print_intervals(struct interval *ints, int size) {
+    printf("intervals:\n");
+    for (int i = 0; i < size; i++) {
+        printf("%d: [%.2lf,%.2lf] %.2lf\n", ints[i].index, ints[i].start,
+                                      ints[i].end, ints[i].common);
+    }
+}
+
+void print_intervals_comp(struct interval *ints, int size) {
     for (int i = 0; i < size; i++) {
         printf("%d: [%.2lf,%.2lf]\n", ints[i].index, ints[i].start,
                                       ints[i].end);
@@ -49,12 +57,12 @@ int main() {
             scanf("%lf %lf", &ints[i].start, &ints[i].end);
             ints[i].common = common(ints[i].start, ints[i].end, start, end);
         }
-
-        //print_intervals(ints, intc);
+        
+        print_intervals_comp(ints, intc);
 
         /* sort intervals by size of intersection with main interval */
         qsort(ints, intc, sizeof(struct interval), compare);
-        
+
         double size = end-start;
         int usedn = 0;
 
@@ -99,17 +107,19 @@ int main() {
             }
 
             /* resort intervals */
-            qsort(ints+i, intc-i, sizeof(struct interval), compare);
+            qsort(ints+i+1, intc-i-1, sizeof(struct interval), compare);
         }
 
         if (size <= 0) {
             printf("%d\n", usedn);
+            /*
             if (usedn > 0) {
                 for (int i = 0; i < usedn; i++) {
                     printf("%d ", used[i]);
                 }
                 printf("\n");
             }
+            */
         } else {
             printf("impossible\n");
         }
