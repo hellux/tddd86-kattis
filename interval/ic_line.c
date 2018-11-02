@@ -12,16 +12,8 @@ double min(double a, double b) { return a < b ? a : b; }
 double max(double a, double b) { return a > b ? a : b; }
 
 int compare(const void* v1, const void* v2) {
-    struct interval *i1 = (struct interval*)v1;
-    struct interval *i2 = (struct interval*)v2;
-
-    if (i1->start < i2->start) {
-        return -1;
-    } else if (i2->start < i1->start) {
-        return 1;
-    } else {
-        return i1->end > i2->end ? -1 : 1;
-    }
+    return ((struct interval*)v1)->start <
+           ((struct interval*)v2)->start ? -1 : 1;
 }
 
 void print_intervals(struct interval *ints, int size) {
@@ -37,7 +29,7 @@ int main() {
     int used[20000];
 
     while (scanf("%lf %lf", &start, &end) == 2) {
-        printf("[%.2f, %.2f]\n", start, end);
+        //printf("[%.2f, %.2f]\n", start, end);
         int intc;
         scanf("%d", &intc);
 
@@ -46,12 +38,26 @@ int main() {
             scanf("%lf %lf", &ints[i].start, &ints[i].end);
         }
 
-        print_intervals(ints, intc);
+        //print_intervals(ints, intc);
+
+        int usedn = 0;
+
+        if (start == end) {
+            struct interval *valid = NULL;
+            for (int i = 0; i < intc; i++) {
+                if (ints[i].start <= start && end <= ints[i].end) {
+                    valid = &ints[i];
+                    break;
+                }
+            }
+            if (valid) {
+                used[0] = valid->index;
+                usedn = 1;
+            }
+        }
 
         /* sort intervals by size of intersection with main interval */
         qsort(ints, intc, sizeof(struct interval), compare);
-        
-        int usedn = 0;
 
         int pindex = -1;
         double pend = start;
@@ -81,16 +87,12 @@ int main() {
             start = pend;
         }
 
-        if (start >= end) {
+        if (start >= end && usedn > 0) {
             printf("%d\n", usedn);
-            if (usedn > 0) {
-                for (int i = 0; i < usedn; i++) {
-                    printf("%d", used[i]);
-                    if (i != usedn-1)
-                        printf(" ");
-                }
-                printf("\n");
+            for (int i = 0; i < usedn; i++) {
+                printf("%d ", used[i]);
             }
+            printf("\n");
         } else {
             printf("impossible\n");
         }
