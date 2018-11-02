@@ -4,15 +4,15 @@
 
 struct interval {
     int index;
-    float start;
-    float end;
-    float common;
+    double start;
+    double end;
+    double common;
 };
 
-float min(float a, float b) { return a < b ? a : b; }
-float max(float a, float b) { return a > b ? a : b; }
+double min(double a, double b) { return a < b ? a : b; }
+double max(double a, double b) { return a > b ? a : b; }
 
-float common(float start1, float end1, float start2, float end2) {
+double common(double start1, double end1, double start2, double end2) {
     return min(end1, end2) - max(start1, start2);
 }
 
@@ -29,32 +29,33 @@ int compare(const void* v1, const void* v2) {
 
 void print_intervals(struct interval *ints, int size) {
     for (int i = 0; i < size; i++) {
-        printf("%d: [%.2f,%.2f] %.2f\n", ints[i].index, ints[i].start,
-                                         ints[i].end, ints[i].common);
+        printf("%d: [%.2lf,%.2lf]\n", ints[i].index, ints[i].start,
+                                      ints[i].end);
     }
 }
 
 int main() {
-    float start, end;
+    double start, end;
     struct interval ints[20000];
+    int used[20000];
 
-    while (scanf("%f %f", &start, &end) == 2) {
+    while (scanf("%lf %lf", &start, &end) == 2) {
         int intc;
         scanf("%d", &intc);
 
         for (int i = 0; i < intc; i++) {
             ints[i].index = i;
-            scanf("%f %f", &ints[i].start, &ints[i].end);
+            scanf("%lf %lf", &ints[i].start, &ints[i].end);
             ints[i].common = common(ints[i].start, ints[i].end, start, end);
         }
 
+        print_intervals(ints, intc);
+
         /* sort intervals by size of intersection with main interval */
         qsort(ints, intc, sizeof(struct interval), compare);
-
-        //print_intervals(ints, intc);
         
-        float size = end-start;
-        int needed = 0;
+        double size = end-start;
+        int usedn = 0;
 
         /* go through intervals, starting with largest */
         for (int i = 0; i < intc && size > 0; i++) {
@@ -80,11 +81,10 @@ int main() {
             if (valid->end >= end) end = valid->start;
 
             /* check if interval changed */
-            float new_size = end-start;
+            double new_size = end-start;
             if (new_size < size) {
                 size = new_size;
-                /* TODO create list of used intervals, currently incorrect */
-                needed++;
+                used[usedn++] = valid->index;
                 /* exit if complete */
                 if (new_size <= 0) {
                     break;
@@ -108,13 +108,15 @@ int main() {
         }
 
         if (size <= 0) {
-            printf("%d\n", needed);
-            if (needed > 0) {
-                for (int i = 0; i < needed; i++) {
-                    printf("%d ", ints[i].index);
+            printf("%d\n", usedn);
+            /*
+            if (usedn > 0) {
+                for (int i = 0; i < usedn; i++) {
+                    printf("%d ", used[i]);
                 }
                 printf("\n");
             }
+            */
         } else {
             printf("impossible\n");
         }
