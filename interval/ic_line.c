@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
 struct interval {
     int index;
@@ -8,19 +7,9 @@ struct interval {
     double end;
 };
 
-double min(double a, double b) { return a < b ? a : b; }
-double max(double a, double b) { return a > b ? a : b; }
-
 int compare(const void* v1, const void* v2) {
     return ((struct interval*)v1)->start <
            ((struct interval*)v2)->start ? -1 : 1;
-}
-
-void print_intervals(struct interval *ints, int size) {
-    for (int i = 0; i < size; i++) {
-        printf("%d: [%.2lf,%.2lf]\n", ints[i].index, ints[i].start,
-                                      ints[i].end);
-    }
 }
 
 int main() {
@@ -29,7 +18,6 @@ int main() {
     int used[20000];
 
     while (scanf("%lf %lf", &start, &end) == 2) {
-        //printf("[%.2f, %.2f]\n", start, end);
         int intc;
         scanf("%d", &intc);
 
@@ -37,8 +25,6 @@ int main() {
             ints[i].index = i;
             scanf("%lf %lf", &ints[i].start, &ints[i].end);
         }
-
-        //print_intervals(ints, intc);
 
         int usedn = 0;
 
