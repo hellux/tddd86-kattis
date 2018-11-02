@@ -2,11 +2,12 @@ input="/tmp/input"
 ans="/tmp/answers"
 
 test_count=$1
+interval=$2
 
 for i in $(seq "$test_count"); do
-    int_start=$((RANDOM-16384))
-    int_end=$((RANDOM-16384))
-    interval_count=$((RANDOM % ($2+1)));
+    int_start=$((RANDOM%interval-interval/2))
+    int_end=$((RANDOM%interval-interval/2))
+    interval_count=$3;
 
     if [ "$int_end" -lt "$int_start" ]; then
         tmp=$int_start;
@@ -17,8 +18,8 @@ for i in $(seq "$test_count"); do
     echo $int_start $int_end
     echo $interval_count
     for i in $(seq $interval_count); do
-        a=$((RANDOM-16384))
-        b=$((RANDOM-16384))
+        a=$((RANDOM%interval-interval/2))
+        b=$((RANDOM%interval-interval/2))
         if [ "$a" -lt "$b" ];
         then echo $a $b
         else echo $b $a

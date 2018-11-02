@@ -1,6 +1,9 @@
 /*
  * Algorithm
  * -load values into data structures
+ *  -stack is fixed array
+ *  -queue is fixed array
+ *  -pueue is fixed array heap
  * -compare output with given values
  */
 #include <stdio.h>
@@ -48,21 +51,46 @@ int q_pop(struct queue* q) { return q->block[q->start++]; }
 
 struct pueue {
     int block[MAX_INSTR];
-    int start;
-    int end;
+    int size;
 };
 void p_reset(struct pueue* p) {
-    p->start = p->end = 0;
-    p->block[p->start] = -1; 
+    p->size = 0;
 }
 void p_push(struct pueue* p, int value) {
-    int pos = insert_pos(p->block, p->start, p->end, value);
-    for (int i = p->end++; i > pos; i--) {
-        p->block[i] = p->block[i-1];
+    int current = p->size++;
+    int parent = (current-1) >> 1;
+    while (p->block[parent] < value && parent >= 0) {
+        p->block[current] = p->block[parent];
+        current = parent;
+        parent = (current-1) >> 1;
     }
-    p->block[pos] = value;
+    p->block[current] = value;
 }
-int p_pop(struct pueue* p) { return p->block[p->start++]; }
+int p_pop(struct pueue* p) {
+    int value = p->block[0];
+    p->block[0] = p->block[--p->size];
+    int current = 0;
+    int max = current << 1;
+    max += (p->block[max+1] > p->block[max+2]) ? 1 : 2;
+
+    while (p->block[max] > p->block[current] && max < p->size) {
+        int tmp = p->block[max];
+        p->block[max] = p->block[current];
+        p->block[current] = tmp;
+
+        current = max;
+        max = current << 1;
+        max += (p->block[max+1] > p->block[max+2]) ? 1 : 2;
+    }
+    return value;
+}
+void p_show(struct pueue* p) {
+    printf("( ");
+    for (int i = 0; i < p->size; i++) {
+        printf("%d ", p->block[i]);
+    }
+    printf(")\n");
+}
 
 int main() {
     char* type_strings[] = {"stack", "queue", "priority queue"};

@@ -3,32 +3,62 @@
 
 using namespace std;
 
-struct node {
-    int subnode_count;
-    struct node** subnodes;
-}
- 
+struct node* create_node();
+void init_node(struct node* n, struct node* parent);
+struct node* add_node(struct node* n);
+struct node* create_tree(string exploration);
 vector<string> read_input();
-bool equal(vector<int> v1, vector <int> v2);
-vector<int> exploration_checksum(string exploration);
+
+const int SUBNODES_NODE_START_BUFFER = 20;
+
+struct node {
+    struct node* subtrees;
+    struct node* parent;
+    int subtreec;
+    int subtree_buffer;
+    bool toggle;
+};
+
+struct node* create_node() {
+    struct node* n = (struct node*) malloc(sizeof(struct node));
+    init_node(n, NULL);
+    return n;
+}
+
+void init_node(struct node* n, struct node* parent) {
+    n->subtree_buffer = SUBNODES_NODE_START_BUFFER;
+    n->subtrees = (struct node*) malloc(sizeof(struct node)*n->subtree_buffer);
+    n->parent = parent;
+}
+
+struct node* add_node(struct node* n) {
+    if (n->subtreec == n->subtree_buffer) {
+        n->subtree_buffer *= 2;
+        n->subtrees = (struct node*) realloc(n->subtrees, sizeof(n)*n->subtree_buffer);
+    }
+    struct node* new_node = &n->subtrees[n->subtreec++];
+    init_node(new_node, n);
+    return new_node;
+}
 
 int main() {
     vector<string> scenarios = read_input();
-
-    for (unsigned int i = 0; i < scenarios.size(); i += 2) {
-        bool same_tree = equal(
-            exploration_checksum(scenarios[i]),
-            exploration_checksum(scenarios[i+1])
-        );
-        if (same_tree) {
-            cout << "same";
-        } else {
-            cout << "different";
-        }
-        cout << endl;
-    }
-
+    create_tree(scenarios.back());
     return 0;
+}
+
+struct node* create_tree(string exploration) {
+     struct node* root = create_node();
+     struct node* current = root;
+
+     for (auto instr : exploration) {
+         if (instr == '0') {
+             current = add_node(current);
+         } else {
+             current = current->parent;
+         }
+     }
+     return root;
 }
 
 vector<string> read_input() {
@@ -43,37 +73,4 @@ vector<string> read_input() {
     }
     
     return strings;
-}
-
-bool equal(vector<int> v1, vector <int> v2) {
-    if (v1.size() != v2.size()) {
-        return false;
-    }
-    for (unsigned int i = 0; i < v1.size(); i++) {
-        if (v1[i] != v2[i]) {
-            return false;
-        }
-    }
-    return true;
-}
-
-/*
- * Create checksum of resulting tree by following exploration.
- * Checksum is a vector of ints representing how many nodes
- * there are for each depth (steps from root node).
- */
-vector<int> exploration_checksum(string exploration) {
-    vector<int> checksum;
-    unsigned int depth = 0;
-    for (auto bit : exploration) {
-        if (bit == '0') {
-            if (checksum.size() <= depth) {
-                checksum.push_back(0);
-            }
-            checksum[depth++]++;
-        } else if (bit == '1') {
-            depth--;
-        }
-    }
-    return checksum;
 }

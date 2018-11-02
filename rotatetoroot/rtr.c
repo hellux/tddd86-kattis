@@ -19,6 +19,46 @@ struct node {
     int left_depth;
     int right_depth;
 };
+/*
+ * Rotate n and return if it became root
+ */
+bool rotate(struct node* n) {
+    struct node* parent = n->parent;
+
+    if (parent->parent) {
+        if (parent == parent->parent->low) {
+            parent->parent->low = n;
+        } else {
+            parent->parent->high = n;
+        }
+    }
+
+    if (n == parent->low) {
+        /* rotate right */
+        if (n->high) n->high->parent = parent;
+        parent->low = n->high;
+        n->high = parent;
+    } else {
+        /* rotate left */
+        if (n->low) n->low->parent = parent;
+        parent->high = n->low;
+        n->low = parent;
+    }
+
+    n->parent = parent->parent;
+    parent->parent = n;
+
+    return n->parent == NULL;
+}
+/*
+ * rotates n until it is root or has higher priority than
+ * its parent. returns root
+ * n may not be root at start
+ */
+struct node* rotatetoroot(struct node* n, struct node* root) {
+    while (rotate(n) != root) {}
+    return root;
+}
 
 int max(int n1, int n2) {
     if (n1 < n2) {
