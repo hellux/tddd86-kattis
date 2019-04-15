@@ -1,40 +1,38 @@
-import Data.List (sort)
+import qualified Data.Set as Set
+import Data.Function (on)
 
-{--
-data Subway = Subway [Subway] deriving (Show)
+data Subway = Subway (Set.Set Subway) deriving (Show, Ord, Eq)
 type SubwayZipper = (Subway, [Subway])
 
 newSub :: SubwayZipper -> SubwayZipper
-newSub (current, bs) = (Subway [], current:bs)
+newSub (current, bs) = (Subway Set.empty, current:bs)
 prevSub :: SubwayZipper -> SubwayZipper
-prevSub (current, (Subway above):bs) = (Subway (current:above), bs)
+prevSub (current, (Subway above):bs) = (Subway (Set.insert current above), bs)
 
 createSubway :: String -> SubwayZipper
-createSubway = foldl f (Subway [], []) where
+createSubway = foldl f (Subway Set.empty, []) where
     f :: SubwayZipper -> Char -> SubwayZipper
     f zipper '0' = newSub zipper
     f zipper '1' = prevSub zipper
 
---}
+compareExploration :: String -> String -> Bool
+compareExploration = (==) `on` createSubway
 
-depths :: String -> [Integer]
-depths = sort . snd . foldl f (0, []) where
-    f :: (Integer, [Integer]) -> Char -> (Integer, [Integer])
-    f (depth, ds) '0' = (depth+1, depth:ds)
-    f (depth, ds) '1' = (depth-1, ds)
+solve :: [(String, String)] -> [Bool]
+solve = map (uncurry compareExploration)
 
-compareExploration :: (String, String) -> Bool
-compareExploration (exp1, exp2) = (depths exp1) == (depths exp2)
-
-solve :: [String] -> [Bool]
-solve (_:cases) = map compareExploration (pairwise cases) where
+-- convert single input string to a list pairs of exploration strings to
+-- compare
+parseInput :: String -> [(String, String)]
+parseInput (_:cases) = pairwise $ words cases where
     pairwise [] = []
     pairwise (e1:e2:es) = (e1, e2):pairwise es
 
-writeOutput :: [Bool] -> String
-writeOutput = unlines . map f where
+-- convert list of bools to single string one case per line
+formatOutput :: [Bool] -> String
+formatOutput = unlines . map f where
     f :: Bool -> String
     f True = "same"
     f False = "different"
 
-main = interact (writeOutput . solve . words)
+main = interact (formatOutput . solve . parseInput)
