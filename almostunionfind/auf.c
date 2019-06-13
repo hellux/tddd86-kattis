@@ -6,8 +6,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_NUMS 100001
-#define INIT_CAP 10
+//#define DEBUG
+
+#define MAX_NUMS 100000
+#define INIT_CAP 100
 
 struct set {
     int* numbers;
@@ -20,22 +22,24 @@ struct set* set_ptrs[MAX_NUMS]; /* index = num-1 pointing to its set */
 int numc;
 
 void set_debug() {
+#ifdef DEBUG
     printf("Sets:\n");
     for (int i = 0; i < numc; i++) {
         struct set* s = set_ptrs[i];
-        printf("%d: ( ", i+1);
+        printf("%d: %p ( ", i+1, s);
         for (int i = 0; i < s->size; i++) {
             printf("%d ", s->numbers[i]);
         }
         printf(") \n");
     }
+#endif
 }
 
 void create_sets() {
     for (int i = 0; i < MAX_NUMS; i++) {
         struct set* s = &sets[i];
-        s->numbers = malloc(sizeof(int)*INIT_CAP);
         s->capacity = INIT_CAP;
+        s->numbers = malloc(sizeof(int)*s->capacity);
     }
 }
 
@@ -48,20 +52,24 @@ void destroy_sets() {
 
 void clear_sets() {
     for (int i = 0; i < numc; i++) {
-        struct set* s = &sets[i];
+        struct set* s = sets+i;
+
         set_ptrs[i] = s;
 
-        s->size = 1;
         s->numbers[0] = i+1;
+        s->size = 1;
     }
 }
 
 void remove_number(struct set* s, int num) {
     int index = 0;
     while (index < s->size) {
-        if (s->numbers[index++] == num) break;
+        if (s->numbers[index] == num) {
+            break;
+        } else {
+            index++;
+        }
     }
-    index--;
 
     s->size--;
     for (int i = index; i < s->size; i++) {
@@ -70,46 +78,53 @@ void remove_number(struct set* s, int num) {
 }
 
 void insert_number(struct set* s, int num) {
-    s->numbers[s->size++] = num;
+    s->size++;
 
     if (s->size == s->capacity) {
         s->capacity *= 2;
         s->numbers = realloc(s->numbers, sizeof(int)*s->capacity);
     }
-}
 
-void move_number(struct set* src, struct set* dest, int num) {
-    remove_number(src, num);
-    insert_number(dest, num);
-    set_ptrs[num-1] = dest;
+    s->numbers[s->size-1] = num;
+
+    set_ptrs[num-1] = s;
 }
 
 void set_union(int p, int q) {
+#ifdef DEBUG
+    printf("union: %d %d\n", p, q);
+#endif
     struct set* src = set_ptrs[p-1];
-    struct set* dest = set_ptrs[q-1];
-
-    if (dest->size < src->size) {
+    struct set* dst = set_ptrs[q-1];
+    if (dst->size < src->size) {
         src = set_ptrs[q-1];
-        dest = set_ptrs[p-1];
-    } 
+        dst = set_ptrs[p-1];
+    }
 
-    if (src != dest) {
+    if (src != dst) {
         for (int i = 0; i < src->size; i++) {
-            move_number(src, dest, src->numbers[i]);
+            insert_number(dst, src->numbers[i]);
         }
     }
 }
 
 void set_move(int p, int q) {
+#ifdef DEBUG
+    printf("move: %d -> %d\n", p, q);
+#endif
     struct set* src = set_ptrs[p-1];
-    struct set* dest = set_ptrs[q-1];
+    struct set* dst = set_ptrs[q-1];
 
-    if (src != dest) {
-        move_number(src, dest, p);
+    if (src != dst) {
+        remove_number(src, p);
+        insert_number(dst, p);
     }
 }
 
 void set_print(int p) {
+#ifdef DEBUG
+    printf("print: %d\n", p);
+#endif
     struct set* s = set_ptrs[p-1];
 
     int sum = 0;
@@ -123,11 +138,15 @@ void set_print(int p) {
 int main() {
     create_sets();
 
-    int commc;
-    while (scanf("%d%d", &numc, &commc) == 2) {
+    int cmdc;
+    while (scanf("%d%d", &numc, &cmdc) == 2) {
+#ifdef DEBUG
+            printf("case: %d %d\n", numc, cmdc);
+#endif
         clear_sets();
+        set_debug();
 
-        for (int i = 0; i < commc; i++) {
+        for (int i = 0; i < cmdc; i++) {
             int command, p, q;
             scanf("%d", &command);
 
@@ -144,8 +163,12 @@ int main() {
                 scanf("%d", &p);
                 set_print(p);
             }
+
+            set_debug();
         }
     }
 
     destroy_sets();
+
+    return 0;
 }
